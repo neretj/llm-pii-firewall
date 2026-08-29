@@ -16,8 +16,8 @@ Thank you for your interest in contributing! PII Firewall is an open-source proj
 ## Development setup
 
 ```bash
-git clone https://github.com/neretj/llm-pii-firewall.git
-cd llm-pii-firewall/pii-firewall
+git clone https://github.com/neretj/pii-firewall.git
+cd pii-firewall/pii-firewall
 
 python -m venv .venv
 source .venv/bin/activate        # Linux/macOS
@@ -31,10 +31,7 @@ python -m spacy download es_core_news_sm
 ## Running tests
 
 ```bash
-# Unit tests
-pytest tests/
-
-# Integration tests (require model downloads)
+# Test suite (some cases require optional model downloads)
 pytest tests_integration/
 
 # Smoke test
@@ -97,7 +94,7 @@ test: add German Steuernummer integration test
 
 1. Fork the repo and create a branch from `main`
 2. Make your changes with tests
-3. Ensure `pytest tests/` passes
+3. Ensure `pytest tests_integration/` passes
 4. Open a PR describing what you changed and why
 
 For large changes, please open an issue first so we can discuss the design before you invest time in the implementation.

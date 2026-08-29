@@ -604,10 +604,7 @@ To show the guide in a panel in VS Code:
 ## 🧪 Testing
 
 ```bash
-# Unit tests
-pytest tests/
-
-# Integration tests
+# Test suite (some cases require optional model downloads)
 pytest tests_integration/
 
 # Quick package smoke test
