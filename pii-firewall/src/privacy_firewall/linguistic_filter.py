@@ -122,13 +122,36 @@ class SpaCyNLPEngine:
         if entity_tokens and entity_tokens[-1].pos_ in {"VERB", "AUX"}:
             return True
         
-        # Check if there's a verb immediately before the entity
+        # Check if there's a COMMAND verb immediately before the entity.
+        #
+        # An auxiliary/copular verb before a name introduces it rather than
+        # negating it — "My name is John Doe", "I am Sarah Connor", "The patient
+        # is Maria Lopez", "Me llamo Juan Perez". That is the single most common
+        # way a person discloses their own name, so AUX must never disqualify an
+        # entity. Likewise a mid-sentence verb ("I met John Doe") is narration,
+        # not a command.
+        #
+        # Only a sentence-initial imperative signals the command phrase this
+        # filter exists for ("Compare Ana Garcia", "Check Maria Lopez").
         if pre_entity_tokens:
             last_before = pre_entity_tokens[-1]
-            if last_before.pos_ in {"VERB", "AUX"}:
+            if last_before.pos_ == "VERB" and self._is_sentence_initial(
+                text, context_start + last_before.idx
+            ):
                 return True
-        
+
         return False
+
+    @staticmethod
+    def _is_sentence_initial(text: str, abs_pos: int) -> bool:
+        """True if ``abs_pos`` is the first token of a sentence in the full text.
+
+        Uses absolute positions in the original text rather than the parsed
+        context window, so a window that happens to cut mid-sentence cannot make
+        an ordinary verb look like an imperative.
+        """
+        prefix = text[:abs_pos].rstrip()
+        return not prefix or prefix[-1] in ".!?;\n"
     
     def is_likely_name(self, text: str) -> bool:
         """Use linguistic features to validate if text is likely a person name.
